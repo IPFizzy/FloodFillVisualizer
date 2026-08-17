@@ -117,7 +117,7 @@ The space bound comes from the recursive call stack. A large uninterrupted regio
 ## Project Structure
 
 ```text
-FloodFillRecursion/
+FloodFillVisualizer/
 ├── FloodFillRecursion/
 │   ├── Models/
 │   │   ├── BoardModel.cs
@@ -149,8 +149,8 @@ Handles console interaction, board rendering, coordinate validation, animation, 
 Clone the repository:
 
 ```bash
-git clone https://github.com/IPFizzy/FloodFillRecursion.git
-cd FloodFillRecursion
+git clone https://github.com/IPFizzy/FloodFillVisualizer.git
+cd FloodFillVisualizer
 ```
 
 Run the application:
@@ -164,12 +164,6 @@ Or open `FloodFillRecursion.slnx` in Visual Studio and run the project.
 ## Practice Project Context
 
 This repository is preserved as a completed algorithm practice project. It demonstrates recursive traversal, two-dimensional arrays, boundary conditions, visited-state tracking, randomized grid generation, console visualization, and termination through explicit stopping conditions.
-
-## Recommended Repository Name
-
-For a public portfolio, **`FloodFillVisualizer`** is clearer than `FloodFillRecursion` because it describes the finished program rather than only the technique used internally.
-
-The internal project, folder, and solution names can remain unchanged after the GitHub repository itself is renamed.
 
 ## Author
 

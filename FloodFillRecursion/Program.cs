@@ -1,236 +1,143 @@
-﻿/*
- * Keon Bushman
- * CST - 250
- * 06/07/2026
- * Flood Fill Recursion
- * Activity 3
- * Activity 3 Guide
- */
-
 using FloodFillRecursion.Models;
 
-//---------------------------------------------------------------
-// Start of the Main Method
-//---------------------------------------------------------------
+const int boardSize = 20;
+const int shapeCount = 3;
+const int animationDelayMilliseconds = 15;
 
-// Declare and initialize
-// Create a new BoardModel
-BoardModel board = new BoardModel(20, 3);
-int startRow = -1, startCol = -1;
+BoardModel board = new BoardModel(boardSize, shapeCount);
 
-// Print the board to the console
-Utility.PrintBoard(board);
+Console.WriteLine("Recursive Flood Fill Visualizer");
+Console.WriteLine("-------------------------------");
+Console.WriteLine("W = wall   . = empty   ~ = filled");
+Console.WriteLine();
+PrintBoard(board);
 
-// Prompt the user for the starting row (1 - 20)
-Console.Write("Enter the row to start the flood fill at: ");
+int startRow = ReadCoordinate("Enter the starting row", board.Size) - 1;
+int startColumn = ReadCoordinate("Enter the starting column", board.Size) - 1;
 
-// Remove 1 from the input to get 0-19 range for row
-startRow = Utility.ReadIntFromConsole() - 1;
-
-// Prompt the user for the starting column (1 - 20)
-Console.Write("Enter the column to start the flood fill at: ");
-
-// Remove 1 from the input to get 0-19 range for col
-startCol = Utility.ReadIntFromConsole() - 1;
-
-// Call the flood fill method using the board
-board = Utility.FloodFill(board, startRow, startCol);
-
-// Print the new board
-Utility.PrintBoard(board);
-
-//---------------------------------------------------------------
-// End of the Main Method
-//---------------------------------------------------------------
-
-//---------------------------------------------------------------
-// Define a utility class
-//---------------------------------------------------------------
-
-static class Utility
+if (board.Grid[startRow, startColumn].Contents == "W")
 {
-    /// <summary>
-    /// Print the board to the console
-    /// </summary>
-    /// <param name="board"></param>
-    internal static void PrintBoard(BoardModel board)
+    Console.WriteLine();
+    Console.WriteLine("The selected cell is a wall, so there is nothing to fill.");
+    return;
+}
+
+int filledCells = 0;
+FloodFill(board, startRow, startColumn, ref filledCells, animationDelayMilliseconds);
+
+Console.Clear();
+Console.WriteLine("Recursive Flood Fill Visualizer");
+Console.WriteLine("-------------------------------");
+Console.WriteLine("W = wall   . = empty   ~ = filled");
+Console.WriteLine();
+PrintBoard(board);
+
+Console.ResetColor();
+Console.WriteLine();
+Console.WriteLine($"Flood fill complete. Filled cells: {filledCells}");
+Console.WriteLine($"Starting position: row {startRow + 1}, column {startColumn + 1}");
+
+static void FloodFill(
+    BoardModel board,
+    int row,
+    int column,
+    ref int filledCells,
+    int animationDelayMilliseconds)
+{
+    if (!IsOnBoard(board, row, column))
     {
-        // Make sure the color of the column numbers is white
-        Console.ForegroundColor = ConsoleColor.White;
+        return;
+    }
 
-        // Start the column numbers row with spaces to keep the numbers aligned
-        Console.Write("   ");
-
-        // Loop to add column numbers for the board
-        for (int colNum = 0; colNum < board.Size; colNum++)
-        {
-            // Print the colNum with a 3-character width
-            Console.Write($"{colNum + 1,3}");
-        }
-
-        Console.WriteLine();
-
-        // Loop through the rows of the board
-        for (int row = 0; row < board.Size; row++)
-        {
-            // Print each row number
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write($"{row + 1,2} ");
-
-            // Loop through the columns of the board
-            for (int col = 0; col < board.Size; col++)
-            {
-                // Check if the current cell is a wall
-                if (board.Grid[row, col].Contents == "W")
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("  W");
-                }
-                else if (board.Grid[row, col].Contents == "E")
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("  .");
-                }
-                else if (board.Grid[row, col].Contents == "F")
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.Write("  ~");
-                }
-                else
-                {
-                    Console.Write("   ");
-                }
-            }
-
-            // Use a WriteLine to start a new row
-            Console.WriteLine();
-        }
-    } // End of PrintBoard method
-
-    /// <summary>
-    /// Perform a flood fill algorithm on the given row and col
-    /// </summary>
-    /// <param name="board"></param>
-    /// <param name="row"></param>
-    /// <param name="col"></param>
-    /// <returns></returns>
-    internal static BoardModel FloodFill(BoardModel board, int row, int col)
+    if (board.Grid[row, column].Contents != "E")
     {
-        // Declare and initialize
-        int sleepCount = 25; // milliseconds
+        return;
+    }
 
-        // Change the text color to white
-        Console.ForegroundColor = ConsoleColor.White;
+    board.Grid[row, column].Contents = "F";
+    filledCells++;
 
-        // Print the current cell to the console
-        Console.Write($"Filling at {row}, {col} ");
-
-        // Pause the program for sleepCount number of milliseconds
-        Thread.Sleep(sleepCount);
-
-        // Check if the cell is on the board
-        if (row < 0 || row >= board.Size || col < 0 || col >= board.Size)
-        {
-            // Print a message indicating the cell is out of bounds
-            Console.WriteLine("Out of bounds. Stop");
-
-            // Pause the program for sleepCount number of milliseconds
-            Thread.Sleep(sleepCount);
-
-            // If the cell is not on the board, end the method
-            return board;
-        }
-
-        // If the cell is a wall, end the method
-        if (board.Grid[row, col].Contents == "W")
-        {
-            // Print a message indicating the cell is a wall
-            Console.WriteLine("Hit a wall. Stop");
-
-            // Pause the program for sleepCount number of milliseconds
-            Thread.Sleep(sleepCount);
-
-            return board;
-        }
-
-        // If the cell has already been filled, end the method
-        else if (board.Grid[row, col].Contents == "F")
-        {
-            // Print a message indicating the cell already filled
-            Console.WriteLine("Already Filled. Stop");
-
-            // Pause the program for sleepCount number of milliseconds
-            Thread.Sleep(sleepCount);
-
-            return board;
-        }
-
-        // Else, fill the cell
-        else
-        {
-            board.Grid[row, col].Contents = "F";
-
-            // Pause the program for sleepCount number of milliseconds
-            Thread.Sleep(sleepCount);
-        }
-
-        // Improve the visual effect of the flood fill
-        // Comment out to have program history
+    if (animationDelayMilliseconds > 0)
+    {
         Console.Clear();
-
-        // Print the current board
+        Console.WriteLine("Recursive Flood Fill Visualizer");
+        Console.WriteLine("-------------------------------");
+        Console.WriteLine("W = wall   . = empty   ~ = filled");
         Console.WriteLine();
         PrintBoard(board);
+        Console.WriteLine();
+        Console.WriteLine($"Filling from row {row + 1}, column {column + 1}...");
+        Thread.Sleep(animationDelayMilliseconds);
+    }
 
-        // Print a message indicating the next flood fill direction
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write("North: ");
+    FloodFill(board, row - 1, column, ref filledCells, animationDelayMilliseconds);
+    FloodFill(board, row, column + 1, ref filledCells, animationDelayMilliseconds);
+    FloodFill(board, row + 1, column, ref filledCells, animationDelayMilliseconds);
+    FloodFill(board, row, column - 1, ref filledCells, animationDelayMilliseconds);
+}
 
-        // Call the flood fill method to the north
-        board = FloodFill(board, row - 1, col);
+static bool IsOnBoard(BoardModel board, int row, int column)
+{
+    return row >= 0 && row < board.Size &&
+           column >= 0 && column < board.Size;
+}
 
-        // Print a message indicating the next flood fill direction
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write("East: ");
-
-        // Call the flood fill method to the east
-        board = FloodFill(board, row, col + 1);
-
-        // Print a message indicating the next flood fill direction
-        Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.Write("South: ");
-
-        // Call the flood fill method to the south
-        board = FloodFill(board, row + 1, col);
-
-        // Print a message indicating the next flood fill direction
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write("West: ");
-
-        // Call the flood fill method to the west
-        board = FloodFill(board, row, col - 1);
-
-        // Return the board
-        return board;
-    } // End of FloodFill method
-
-    /// <summary>
-    /// Read an integer number from the console
-    /// </summary>
-    /// <returns></returns>
-    internal static int ReadIntFromConsole()
+static int ReadCoordinate(string prompt, int boardSize)
+{
+    while (true)
     {
-        // Declare and initialize
-        int num = -1;
+        Console.Write($"{prompt} (1-{boardSize}): ");
+        string? input = Console.ReadLine();
 
-        // Check if the current input is valid
-        while (!int.TryParse(Console.ReadLine(), out num))
+        if (int.TryParse(input, out int value) && value >= 1 && value <= boardSize)
         {
-            // Inform the user of invalid input and prompt the user again
-            Console.Write("Invalid input. Please enter an integer: ");
+            return value;
         }
 
-        // Return the integer from the user
-        return num;
+        Console.WriteLine($"Please enter a whole number from 1 through {boardSize}.");
     }
+}
+
+static void PrintBoard(BoardModel board)
+{
+    Console.ForegroundColor = ConsoleColor.White;
+    Console.Write("   ");
+
+    for (int column = 0; column < board.Size; column++)
+    {
+        Console.Write($"{column + 1,3}");
+    }
+
+    Console.WriteLine();
+
+    for (int row = 0; row < board.Size; row++)
+    {
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write($"{row + 1,2} ");
+
+        for (int column = 0; column < board.Size; column++)
+        {
+            switch (board.Grid[row, column].Contents)
+            {
+                case "W":
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("  W");
+                    break;
+
+                case "F":
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write("  ~");
+                    break;
+
+                default:
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write("  .");
+                    break;
+            }
+        }
+
+        Console.WriteLine();
+    }
+
+    Console.ResetColor();
 }
